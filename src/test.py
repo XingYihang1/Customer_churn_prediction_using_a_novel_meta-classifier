@@ -37,13 +37,13 @@ if __name__ == "__main__":
 
     # 测试Train类是否能够正常工作
     # train = Train(dataset_name="transaction", encoder_type="label_one_hot", model_type="single", type="skb_grid", save_or_not=False)
-    # trained_model_dict = train.train()
+    # trained_model_dict, selected_features_dict = train.train()
     # print('单个模型：', trained_model_dict)
     # print('Train类测试完成')
     # print('--------------------------------')
 
     # train = Train(dataset_name="transaction", encoder_type="label_one_hot", model_type="stack_ensemble", type="skb_grid", save_or_not=False)
-    # stack_model = train.train()
+    # stack_model, selected_features = train.train()
     # print('堆叠集成模型：', stack_model)
     # print('Train类测试完成')
     # print('--------------------------------')
