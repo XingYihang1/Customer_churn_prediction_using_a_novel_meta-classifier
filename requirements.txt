@@ -1,0 +1,29 @@
+# 核心机器学习库
+scikit-learn>=1.0.0
+numpy>=1.21.0
+pandas>=1.3.0
+
+# XGBoost
+xgboost>=1.6.0
+
+# 贝叶斯优化
+scikit-optimize>=0.9.0
+
+# 不平衡学习
+imbalanced-learn>=0.8.0
+
+# 集成学习库
+deslib>=0.3.0
+
+# 数据可视化
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# 数据处理
+openpyxl>=3.0.0
+
+# 科学计算
+scipy>=1.7.0
+
+# 其他工具
+tqdm>=4.60.0
