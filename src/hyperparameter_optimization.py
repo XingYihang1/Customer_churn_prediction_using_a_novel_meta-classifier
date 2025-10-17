@@ -89,7 +89,7 @@ if __name__ == "__main__":
     #         else:
     #             hpo = HyperparameterOptimization(dataset_name, 'label_one_hot', type)
     #             hpo.save_hyperparameter_params()
-    # hpo = HyperparameterOptimization('transaction', 'label_one_hot', 'pfs_bayes')
+    # hpo = HyperparameterOptimization('telecommunication', 'label_one_hot', 'pfs_bayes')
     # hpo.save_hyperparameter_params()
 
     # 测试加载超参数和选择的特征，看看是否能正常加载
