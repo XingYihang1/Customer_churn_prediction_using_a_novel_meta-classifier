@@ -2,7 +2,7 @@
 
 ## 项目简介
 
-本项目实现了一个基于Oracle的新元分类器用于客户流失预测。该项目复现了相关论文的研究成果，通过集成多个基分类器并使用Oracle元分类器来提高客户流失预测的准确性。
+本项目复现了论文[Customer churn prediction using a novel meta-classifier:an investigation on transaction, Telecommunication and customer churn datasets](https://doi.org/10.1007/s10878-024-01196-w)。该项目复现了相关论文的研究成果，通过集成多个基分类器并使用Oracle元分类器来提高客户流失预测的准确性。
 
 ## 主要特性
 
