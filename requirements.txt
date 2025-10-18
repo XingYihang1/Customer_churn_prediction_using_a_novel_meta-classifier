@@ -1,5 +1,5 @@
 # 核心机器学习库
-scikit-learn>=1.0.0
+scikit-learn==1.6.1
 numpy>=1.21.0
 pandas>=1.3.0
 
