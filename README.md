@@ -114,12 +114,12 @@ results = dataset_main('customer_churn', iter_nums=10)
 2. 使用Oracle分类器作为理想情况下的元分类器
 3. Oracle分类器理论上能够为每个测试样本选择最优的基分类器，基于下述公式(公式的含义详见论文)进行选择：
 
-<math>
-δ<sub>i,j</sub> = {
-    1, if c<sub>i</sub> correctly classifies x<sub>j</sub>
-    0 otherwise
-}
-</math>
+$$
+\delta_{i,j} = \begin{cases}
+    1, & \text{if } c_i \text{ correctly classifies } x_j \\
+    0 & \text{otherwise}
+\end{cases}
+$$
 
 4. 这种方法在理论上能够达到所有集成分类器性能的上限
 
