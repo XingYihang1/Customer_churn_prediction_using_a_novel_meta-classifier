@@ -146,9 +146,9 @@ class Train:
         X_train = self.X_train[selected_features]
         X_test = self.X_test[selected_features]
 
-        # y_train = self.y_train
+        y_train = self.y_train
         # 划分训练集和验证集，比例为8:2
-        X_train, X_val, y_train, y_val = train_test_split(X_train, self.y_train, test_size=0.2, random_state=42)
+        # X_train, X_val, y_train, y_val = train_test_split(X_train, self.y_train, test_size=0.2, random_state=42)
 
         print('开始训练各个基分类器......')
         # 训练各个基分类器
@@ -161,41 +161,41 @@ class Train:
         print('各个基分类器训练完成')
         print('--------------------------------')
 
-        # 获取验证集上每个样本的后验概率, 便于后面计算delta
-        vol_prob_dict = {}
-        vol_pred_dict = {}
-        for name, model in base_models.items():
-            vol_prob_dict[name] = model.predict_proba(X_val)
-            vol_pred_dict[name] = model.predict(X_val)
-        vol_correct_dict = {}  # 验证集上每个样本是否被正确分类，正确为1，错误为0
-        for name, pred in vol_pred_dict.items():
-            vol_correct_dict[name] = (pred == y_val).astype(int)
-        print('验证集上每个样本的预测结果和正确标签计算完成')
-        print('--------------------------------')
+        # # 获取验证集上每个样本的后验概率, 便于后面计算delta
+        # vol_prob_dict = {}
+        # vol_pred_dict = {}
+        # for name, model in base_models.items():
+        #     vol_prob_dict[name] = model.predict_proba(X_val)
+        #     vol_pred_dict[name] = model.predict(X_val)
+        # vol_correct_dict = {}  # 验证集上每个样本是否被正确分类，正确为1，错误为0
+        # for name, pred in vol_pred_dict.items():
+        #     vol_correct_dict[name] = (pred == y_val).astype(int)
+        # print('验证集上每个样本的预测结果和正确标签计算完成')
+        # print('--------------------------------')
 
-        # 获取一个KDTree近邻树用来查找最相似的K个样本
-        K = 200
-        kdtree = KDTree(X_val)
-        print('KDTree近邻树构建完成')
-        print('--------------------------------')
+        # # 获取一个KDTree近邻树用来查找最相似的K个样本
+        # K = 200
+        # kdtree = KDTree(X_val)
+        # print('KDTree近邻树构建完成')
+        # print('--------------------------------')
 
-        # 聚合各个基分类器模型，这一步是关键
-        n_test = X_test.shape[0]
-        classes = np.unique(self.y_test)
-        # 将类别和标签对应上,方便后续查找对齐每个模型给出的后验概率
-        class_to_idx = {label: idx for idx, label in enumerate(classes)}
+        # # 聚合各个基分类器模型，这一步是关键
+        # n_test = X_test.shape[0]
+        # classes = np.unique(self.y_test)
+        # # 将类别和标签对应上,方便后续查找对齐每个模型给出的后验概率
+        # class_to_idx = {label: idx for idx, label in enumerate(classes)}
 
-        print('开始计算各个测试集样本的最终预测概率......')
-        # 对于每个测试集样本，找到最相似的K个样本，计算delta(公式在论文中给出)
-        y_pred_final = np.zeros(n_test)
-        y_prob_final = np.zeros((n_test, len(classes)))
-        for j in range(n_test):
-            x_j = X_test.iloc[j].values.reshape(1, -1) # 第j个测试样本
-            # 找到最相似的K个样本
-            distances, indices = kdtree.query(x_j, k=K)
-            indices = indices[0]
-            # 计算每个分类器在K个相似样本上的局部精确率delta(其实就是后验概率取平均)
-            deltas = {}
+        # print('开始计算各个测试集样本的最终预测概率......')
+        # # 对于每个测试集样本，找到最相似的K个样本，计算delta(公式在论文中给出)
+        # y_pred_final = np.zeros(n_test)
+        # y_prob_final = np.zeros((n_test, len(classes)))
+        # for j in range(n_test):
+        #     x_j = X_test.iloc[j].values.reshape(1, -1) # 第j个测试样本
+        #     # 找到最相似的K个样本
+        #     distances, indices = kdtree.query(x_j, k=K)
+        #     indices = indices[0]
+        #     # 计算每个分类器在K个相似样本上的局部精确率delta(其实就是后验概率取平均)
+        #     deltas = {}
 
             # # 按照局部精确率计算delta
             # for name, pred in vol_pred_dict.items():
@@ -203,21 +203,21 @@ class Train:
             #     deltas[name] = delta
             
             # ------------------------------------------------------------------------------------------------
-            true_labels = y_val.iloc[indices]
-            for name, model in base_models.items():
-                probs_for_true = []
-                for idx, true_label in zip(indices, true_labels):
-                    probs = vol_prob_dict[name][idx]  # (预测为0的概率, 预测为1的概率)
-                    pos = np.where(model.classes_ == true_label)[0][0] # 真实标签在模型中的索引
-                    probs_for_true.append(probs[pos])
-                delta = np.mean(probs_for_true)
-                deltas[name] = delta
+            # true_labels = y_val.iloc[indices]
+            # for name, model in base_models.items():
+            #     probs_for_true = []
+            #     for idx, true_label in zip(indices, true_labels):
+            #         probs = vol_prob_dict[name][idx]  # (预测为0的概率, 预测为1的概率)
+            #         pos = np.where(model.classes_ == true_label)[0][0] # 真实标签在模型中的索引
+            #         probs_for_true.append(probs[pos])
+            #     delta = np.mean(probs_for_true)
+            #     deltas[name] = delta
             # ------------------------------------------------------------------------------------------------
             
-            # 选择delta最大的分类器
-            max_delta_model = max(deltas, key=deltas.get)
-            y_prob_final[j,:] = base_models[max_delta_model].predict_proba(x_j)[0]
-            y_pred_final[j] = base_models[max_delta_model].predict(x_j)
+            # # 选择delta最大的分类器
+            # max_delta_model = max(deltas, key=deltas.get)
+            # y_prob_final[j,:] = base_models[max_delta_model].predict_proba(x_j)[0]
+            # y_pred_final[j] = base_models[max_delta_model].predict(x_j)
 
             # ------------------------------------------------------------------------------------------------
             # # 按照delta计算每个基分类器的预测权重
@@ -242,15 +242,15 @@ class Train:
 
         # ------------------------------------------------------------------------------------------------
         # 理想情况下的oracle分类器
-        # pool_classifier = []
-        # for model_name, model in base_models.items():
-        #     pool_classifier.append(model)
+        pool_classifier = []
+        for model_name, model in base_models.items():
+            pool_classifier.append(model)
         
-        # oracle_classifier = Oracle(pool_classifiers = pool_classifier, random_state = 123, n_jobs = -1)
-        # oracle_classifier.fit(X_train, y_train)
-        # # 注意：Oracle分类器是一种理想情况下的分类器，是所有集成分类器性能的上限，在实际中是无法部署的
-        # y_pred_final = oracle_classifier.predict(X_test, self.y_test)
-        # y_prob_final = oracle_classifier.predict_proba(X_test, self.y_test)
+        oracle_classifier = Oracle(pool_classifiers = pool_classifier, random_state = 123, n_jobs = -1)
+        oracle_classifier.fit(X_train, y_train)
+        # 注意：Oracle分类器是一种理想情况下的分类器，是所有集成分类器性能的上限，在实际中是无法部署的
+        y_pred_final = oracle_classifier.predict(X_test, self.y_test)
+        y_prob_final = oracle_classifier.predict_proba(X_test, self.y_test)
         # ------------------------------------------------------------------------------------------------
         
 
