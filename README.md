@@ -113,12 +113,14 @@ results = dataset_main('customer_churn', iter_nums=10)
 1. 训练多个基分类器（决策树、随机森林、XGBoost等）
 2. 使用Oracle分类器作为理想情况下的元分类器
 3. Oracle分类器理论上能够为每个测试样本选择最优的基分类器，基于下述公式(公式的含义详见论文)进行选择：
-$$
-\delta_{i,j} = \begin{cases}
-    1, & \text{if } c_i \text{ correctly classifies } x_j \\
-    0 & \text{otherwise}
-\end{cases}
-$$
+
+<math>
+δ<sub>i,j</sub> = {
+    1, if c<sub>i</sub> correctly classifies x<sub>j</sub>
+    0 otherwise
+}
+</math>
+
 4. 这种方法在理论上能够达到所有集成分类器性能的上限
 
 ### Dynamic Selection集成
@@ -126,7 +128,9 @@ $$
 
 1. 对于每个测试样本j都在验证集上找到K个与其最相似的验证集样本，本项目使用的是KDTree(还可以使用KNN或聚类算法)
 2. 评估分类器池中的各个分类器在这K个样本上的得分，得分计算公式(公式的含义详见论文)如下：
+
 $$\delta_{i,j} = \frac{\sum_{k=1}^{K} P(w_l | x_k \in w_l, c_i)}{K}$$
+
 3. 选择得分最高的分类器预测测试样本j的标签
 
 
